@@ -1,2 +1,2 @@
 # bam-zeromq
-BuildAMation ZeroMQ package repository
+[BuildAMation](https://github.com/markfinal/BuildAMation) ZeroMQ package repository
