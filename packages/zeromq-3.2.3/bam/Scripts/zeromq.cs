@@ -41,7 +41,7 @@ namespace zeromq
             Bam.Core.Module parent)
         {
             base.Init(parent);
-            this.GeneratedPaths.Add(Key, Bam.Core.TokenizedString.Create("$(packagebuilddir)/$(config)/platform.hpp", this));
+            this.GeneratedPaths.Add(Key, this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp"));
         }
 
         public override void
@@ -62,7 +62,7 @@ namespace zeromq
         ExecuteInternal(
             Bam.Core.ExecutionContext context)
         {
-            var source = Bam.Core.TokenizedString.Create("$(packagedir)/src/platform.hpp.in", this);
+            var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
 
             // parse the input header, and modify it while writing it out
             // modifications are platform specific
@@ -126,7 +126,7 @@ namespace zeromq
         {
             base.Init(parent);
 
-            this.Macros.Add("zmqsrcdir", Bam.Core.TokenizedString.Create("$(packagedir)/src", this));
+            this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
 
             var source = this.CreateCxxSourceContainer("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
 
@@ -140,7 +140,7 @@ namespace zeromq
 
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
                     {
-                        compiler.IncludePaths.Add(TokenizedString.Create("$(packagedir)/builds/msvc", this));
+                        compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
                     }
                 });
             if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX | Bam.Core.EPlatform.Linux))
@@ -154,7 +154,7 @@ namespace zeromq
                 source.PrivatePatch(settings =>
                 {
                     var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.IncludePaths.Add(Bam.Core.TokenizedString.Create("$(packagebuilddir)/$(config)", this));
+                    compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
                 });
 
                 if (this.Linker is ClangCommon.LinkerBase)
@@ -178,7 +178,7 @@ namespace zeromq
                     var compiler = settings as C.ICommonCompilerSettings;
                     if (null != compiler)
                     {
-                        compiler.IncludePaths.Add(TokenizedString.Create("$(packagedir)/include", this));
+                        compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagedir)/include"));
                     }
                 });
 
