@@ -126,6 +126,9 @@ namespace zeromq
         {
             base.Init(parent);
 
+            this.Macros["MajorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("3");
+            this.Macros["MinorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("2");
+
             this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
 
             var source = this.CreateCxxSourceContainer("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
