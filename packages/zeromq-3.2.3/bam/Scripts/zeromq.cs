@@ -34,7 +34,7 @@ namespace zeromq
     public sealed class ZMQPlatformHeader :
         C.CModule
     {
-        private static Bam.Core.FileKey Key = Bam.Core.FileKey.Generate("ZeroMQ platform header");
+        private static Bam.Core.PathKey Key = Bam.Core.PathKey.Generate("ZeroMQ platform header");
 
         protected override void
         Init(
