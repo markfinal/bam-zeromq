@@ -2,7 +2,16 @@
 <PackageDefinition xsi:schemaLocation="http://www.buildamation.com ./Schema/BamPackageDefinitionV1.xsd" name="zeromq" version="3.2.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.buildamation.com">
   <Dependents>
     <Package name="C" />
+    <Package name="Clang" version="Xcode4" />
+    <Package name="Clang" version="Xcode5" />
+    <Package name="Clang" version="Xcode6" default="true" />
+    <Package name="Clang" version="Xcode7" />
+    <Package name="Gcc" version="4.8" />
+    <Package name="Mingw" version="4.8.1" />
     <Package name="NativeBuilder" />
+    <Package name="VisualC" version="12.0" />
+    <Package name="VSSolutionBuilder" />
+    <Package name="WindowsSDK" version="8.1" />
   </Dependents>
   <BamAssemblies>
     <BamAssembly name="Bam.Core" major="1" minor="0" />

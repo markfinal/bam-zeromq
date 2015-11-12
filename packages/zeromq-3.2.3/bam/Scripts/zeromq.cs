@@ -128,6 +128,7 @@ namespace zeromq
 
             this.Macros["MajorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("3");
             this.Macros["MinorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("2");
+            this.Macros["PatchVersion"] = Bam.Core.TokenizedString.CreateVerbatim("3");
 
             this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
 
@@ -143,7 +144,25 @@ namespace zeromq
 
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
                     {
-                        compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
+                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
+
+                        var vcCompiler = settings as VisualCCommon.ICommonCompilerSettings;
+                        if (null != vcCompiler)
+                        {
+                            vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level2;
+                        }
+                    }
+
+                    var clangCompiler = settings as ClangCommon.ICommonCompilerSettings;
+                    if (null != clangCompiler)
+                    {
+                        clangCompiler.ExtraWarnings = false;
+                    }
+
+                    var gccCompiler = settings as GccCommon.ICommonCompilerSettings;
+                    if (null != gccCompiler)
+                    {
+                        gccCompiler.ExtraWarnings = false;
                     }
                 });
             if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX | Bam.Core.EPlatform.Linux))
@@ -157,13 +176,14 @@ namespace zeromq
                 source.PrivatePatch(settings =>
                 {
                     var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
+                    compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
                 });
 
                 if (this.Linker is ClangCommon.LinkerBase)
                 {
-                    var ipc_listener = source.Children.Where(item => (item as C.ObjectFile).InputPath.Parse().EndsWith("ipc_listener.cpp"));
-                    ipc_listener.ElementAt(0).PrivatePatch(settings => {
+                    var ipc_listener = source.Children.Where(item => item.InputPath.Parse().EndsWith("ipc_listener.cpp"));
+                    ipc_listener.ElementAt(0).PrivatePatch(settings =>
+                    {
                         var compiler = settings as C.ICommonCompilerSettings;
                         compiler.DisableWarnings.Add("deprecated-declarations");
                     });
@@ -181,7 +201,7 @@ namespace zeromq
                     var compiler = settings as C.ICommonCompilerSettings;
                     if (null != compiler)
                     {
-                        compiler.IncludePaths.Add(this.CreateTokenizedString("$(packagedir)/include"));
+                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
                     }
                 });
 
