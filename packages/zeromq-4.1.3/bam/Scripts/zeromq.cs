@@ -170,7 +170,7 @@ namespace zeromq
                     var gccCompiler = settings as GccCommon.ICommonCompilerSettings;
                     if (null != gccCompiler)
                     {
-                        gccCompiler.ExtraWarnings = false;
+                        compiler.DisableWarnings.Add("unused-parameter");
                     }
                 });
             if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX | Bam.Core.EPlatform.Linux))
