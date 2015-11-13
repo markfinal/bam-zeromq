@@ -154,6 +154,9 @@ namespace zeromq
                     {
                         compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
 
+                        // Note: this appears from the CMakeLists now
+                        compiler.PreprocessorDefines.Add("ZMQ_USE_SELECT");
+
                         var vcCompiler = settings as VisualCCommon.ICommonCompilerSettings;
                         if (null != vcCompiler)
                         {
