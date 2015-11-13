@@ -164,7 +164,7 @@ namespace zeromq
                     var clangCompiler = settings as ClangCommon.ICommonCompilerSettings;
                     if (null != clangCompiler)
                     {
-                        clangCompiler.ExtraWarnings = false;
+                        compiler.DisableWarnings.Add("unused-parameter"); // zeromq-4.1.3/src/plain_client.cpp:146:30: error: unused parameter 'cmd_data' [-Werror,-Wunused-parameter]
                     }
 
                     var gccCompiler = settings as GccCommon.ICommonCompilerSettings;
