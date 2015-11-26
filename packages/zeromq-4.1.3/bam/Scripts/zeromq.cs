@@ -125,6 +125,7 @@ namespace zeromq
         }
     }
 
+    [Bam.Core.ModuleGroup("Thirdparty")]
     public sealed class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
@@ -138,8 +139,9 @@ namespace zeromq
             this.Macros["MinorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("1");
             this.Macros["PatchVersion"] = Bam.Core.TokenizedString.CreateVerbatim("3");
 
-            this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
+            this.CreateHeaderContainer("$(packagedir)/include/*.h");
 
+            this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
             var source = this.CreateCxxSourceContainer("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
 
             source.PrivatePatch(settings =>
