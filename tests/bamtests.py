@@ -1,6 +1,6 @@
 from testconfigurations import TestSetup, visualc64, mingw32, gcc64, clang64
 
-def ConfigureRepository():
+def configure_repository():
     configs = {}
     configs["zeromqtest"] = TestSetup(win={"Native":[visualc64,mingw32],"VSSolution":[visualc64],"MakeFile":[visualc64,mingw32]},
                                       linux={"Native":[gcc64],"MakeFile":[gcc64]},
