@@ -125,7 +125,7 @@ namespace zeromq
         }
     }
 
-    [Bam.Core.ModuleGroup("Thirdparty")]
+    [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
     public sealed class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
