@@ -30,7 +30,7 @@
 using Bam.Core;
 namespace zeromq
 {
-    public sealed class ZMQPlatformHeader :
+    public class ZMQPlatformHeader :
         C.ProceduralHeaderFile
     {
         protected override TokenizedString OutputPath

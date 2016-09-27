@@ -31,7 +31,7 @@ using Bam.Core;
 using System.Linq;
 namespace zeromq
 {
-    public sealed class ZMQPlatformHeader :
+    public class ZMQPlatformHeader :
         C.CModule
     {
         private static Bam.Core.PathKey Key = Bam.Core.PathKey.Generate("ZeroMQ platform header");
@@ -117,7 +117,7 @@ namespace zeromq
         }
     }
 
-    public sealed class ZMQSharedLibrary :
+    public class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
         protected override void

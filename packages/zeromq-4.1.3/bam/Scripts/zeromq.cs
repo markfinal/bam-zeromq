@@ -32,7 +32,7 @@ using System.Linq;
 namespace zeromq
 {
     [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
-    public sealed class ZMQSharedLibrary :
+    public class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
         protected override void
