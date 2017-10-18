@@ -42,13 +42,14 @@ namespace zeromq
         {
             base.Init(parent);
             this.GeneratedPaths.Add(Key, this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp"));
+            this.Macros.Add("templateConfig", this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in"));
         }
 
         public override void
         Evaluate()
         {
             this.ReasonToExecute = null;
-            var outputPath = this.GeneratedPaths[Key].Parse();
+            var outputPath = this.GeneratedPaths[Key].ToString();
             if (!System.IO.File.Exists(outputPath))
             {
                 this.ReasonToExecute = Bam.Core.ExecuteReasoning.FileDoesNotExist(this.GeneratedPaths[Key]);
@@ -62,13 +63,11 @@ namespace zeromq
         ExecuteInternal(
             Bam.Core.ExecutionContext context)
         {
-            var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
-
             // parse the input header, and modify it while writing it out
             // modifications are platform specific
-            using (System.IO.TextReader readFile = new System.IO.StreamReader(source.Parse()))
+            using (System.IO.TextReader readFile = new System.IO.StreamReader(this.Macros["templateConfig"].ToString()))
             {
-                var destPath = this.GeneratedPaths[Key].Parse();
+                var destPath = this.GeneratedPaths[Key].ToString();
                 var destDir = System.IO.Path.GetDirectoryName(destPath);
                 if (!System.IO.Directory.Exists(destDir))
                 {
@@ -181,12 +180,12 @@ namespace zeromq
 
                 if (this.Linker is ClangCommon.LinkerBase)
                 {
-                    var ipc_listener = source.Children.Where(item => item.InputPath.Parse().EndsWith("ipc_listener.cpp"));
-                    ipc_listener.ElementAt(0).PrivatePatch(settings =>
-                    {
-                        var compiler = settings as C.ICommonCompilerSettings;
-                        compiler.DisableWarnings.Add("deprecated-declarations");
-                    });
+                    source["ipc_listener.cpp"].ForEach(item =>
+                        item.PrivatePatch(settings =>
+                            {
+                                var compiler = settings as C.ICommonCompilerSettings;
+                                compiler.DisableWarnings.Add("deprecated-declarations");
+                            }));
                 }
             }
 

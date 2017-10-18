@@ -33,6 +33,14 @@ namespace zeromq
     public class ZMQPlatformHeader :
         C.ProceduralHeaderFile
     {
+        protected override void
+        Init(
+            Bam.Core.Module parent)
+        {
+            base.Init(parent);
+            this.Macros.Add("templateConfig", this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in"));
+        }
+
         protected override TokenizedString OutputPath
         {
             get
@@ -47,13 +55,11 @@ namespace zeromq
             {
                 var contents = new System.Text.StringBuilder();
 
-                var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
-
                 // parse the input header, and modify it while writing it out
                 // modifications are platform specific
-                using (System.IO.TextReader readFile = new System.IO.StreamReader(source.Parse()))
+                using (System.IO.TextReader readFile = new System.IO.StreamReader(this.Macros["templateConfig"].ToString()))
                 {
-                    var destPath = this.GeneratedPaths[Key].Parse();
+                    var destPath = this.GeneratedPaths[Key].ToString();
                     var destDir = System.IO.Path.GetDirectoryName(destPath);
                     if (!System.IO.Directory.Exists(destDir))
                     {
