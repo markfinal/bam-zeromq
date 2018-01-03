@@ -74,7 +74,7 @@ namespace zeromqtest
             base.Init(parent);
 
 #if D_NEW_PUBLISHING
-            this.SetDefaultMacros(EPublishingType.ConsoleApplication);
+            this.SetDefaultMacrosAndMappings(EPublishingType.ConsoleApplication);
             this.Include<Test>(C.ConsoleApplication.Key);
 #else
             var app = this.Include<Test>(C.ConsoleApplication.Key, EPublishingType.ConsoleApplication);
