@@ -189,12 +189,6 @@ namespace zeromq
                 }
             }
 
-            if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows) &&
-                this.Linker is VisualCCommon.LinkerBase)
-            {
-                this.CompilePubliclyAndLinkAgainst<WindowsSDK.WindowsSDK>(source);
-            }
-
             this.PublicPatch((settings, appliedTo) =>
                 {
                     var compiler = settings as C.ICommonCompilerSettings;

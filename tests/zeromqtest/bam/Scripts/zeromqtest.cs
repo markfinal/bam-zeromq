@@ -43,12 +43,6 @@ namespace zeromqtest
 
             this.CompileAndLinkAgainst<zeromq.ZMQSharedLibrary>(source);
 
-            if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows) &&
-                this.Linker is VisualCCommon.LinkerBase)
-            {
-                this.CompileAndLinkAgainst<WindowsSDK.WindowsSDK>(source);
-            }
-
             this.PrivatePatch(settings =>
                 {
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Linux))
