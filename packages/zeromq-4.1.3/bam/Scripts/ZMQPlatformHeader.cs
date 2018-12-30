@@ -48,12 +48,16 @@ namespace zeromq
                 var contents = new System.Text.StringBuilder();
 
                 var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
+                if (!source.IsParsed)
+                {
+                    source.Parse();
+                }
 
                 // parse the input header, and modify it while writing it out
                 // modifications are platform specific
-                using (System.IO.TextReader readFile = new System.IO.StreamReader(source.Parse()))
+                using (System.IO.TextReader readFile = new System.IO.StreamReader(source.ToString()))
                 {
-                    var destPath = this.GeneratedPaths[Key].Parse();
+                    var destPath = this.GeneratedPaths[HeaderFileKey].ToString();
                     var destDir = System.IO.Path.GetDirectoryName(destPath);
                     if (!System.IO.Directory.Exists(destDir))
                     {

@@ -52,35 +52,34 @@ namespace zeromq
 
             source.PrivatePatch(settings =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.PreprocessorDefines.Add("DLL_EXPORT");
+                    var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    preprocessor.PreprocessorDefines.Add("DLL_EXPORT");
 
                     var cxxCompiler = settings as C.ICxxOnlyCompilerSettings;
                     cxxCompiler.ExceptionHandler = C.Cxx.EExceptionHandler.Synchronous;
 
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
                     {
-                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
+                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
 
                         // Note: this appears from the CMakeLists now
-                        compiler.PreprocessorDefines.Add("ZMQ_USE_SELECT");
+                        preprocessor.PreprocessorDefines.Add("ZMQ_USE_SELECT");
 
-                        var vcCompiler = settings as VisualCCommon.ICommonCompilerSettings;
-                        if (null != vcCompiler)
+                        if (settings is VisualCCommon.ICommonCompilerSettings vcCompiler)
                         {
                             vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level2;
                         }
                     }
 
-                    var clangCompiler = settings as ClangCommon.ICommonCompilerSettings;
-                    if (null != clangCompiler)
+                    if (settings is ClangCommon.ICommonCompilerSettings clangCompiler)
                     {
+                        var compiler = settings as C.ICommonCompilerSettings;
                         compiler.DisableWarnings.Add("unused-parameter"); // zeromq-4.1.3/src/plain_client.cpp:146:30: error: unused parameter 'cmd_data' [-Werror,-Wunused-parameter]
                     }
 
-                    var gccCompiler = settings as GccCommon.ICommonCompilerSettings;
-                    if (null != gccCompiler)
+                    if (settings is GccCommon.ICommonCompilerSettings gccCompiler)
                     {
+                        var compiler = settings as C.ICommonCompilerSettings;
                         compiler.DisableWarnings.Add("unused-parameter");
                     }
                 });
@@ -94,8 +93,8 @@ namespace zeromq
 
                 source.PrivatePatch(settings =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
+                    var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
                 });
 
                 if (this.Linker is ClangCommon.LinkerBase)
@@ -111,18 +110,11 @@ namespace zeromq
                 }
             }
 
-            if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows) &&
-                this.Linker is VisualCCommon.LinkerBase)
-            {
-                this.CompilePubliclyAndLinkAgainst<WindowsSDK.WindowsSDK>(source);
-            }
-
             this.PublicPatch((settings, appliedTo) =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    if (null != compiler)
+                    if (settings is C.ICommonPreprocessorSettings preprocessor)
                     {
-                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
+                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
                     }
                 });
 
