@@ -9,11 +9,21 @@
     <Package name="Clang" version="Xcode8" />
     <Package name="Clang" version="Xcode9" default="true" />
     <Package name="Clang" version="Xcode10" />
-    <Package name="Gcc" version="4.8" />
+    <Package name="Gcc" version="4.8" default="true" />
+    <Package name="Gcc" version="5" />
+    <Package name="Gcc" version="6" />
+    <Package name="Gcc" version="7" />
+    <Package name="Gcc" version="8" />
+    <Package name="Gcc" version="9" />
     <Package name="MakeFileBuilder" />
     <Package name="Mingw" version="4.8.1" />
     <Package name="Publisher" />
+    <Package name="VisualC" version="10.0" />
+    <Package name="VisualC" version="11.0" />
     <Package name="VisualC" version="12.0" />
+    <Package name="VisualC" version="14.0" default="true" />
+    <Package name="VisualC" version="15.0" />
+    <Package name="VisualC" version="16" />
     <Package name="VSSolutionBuilder" />
     <Package name="XcodeBuilder" />
     <Package name="zeromq" version="4.1.3" default="true" />
