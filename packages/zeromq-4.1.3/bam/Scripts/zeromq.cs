@@ -28,7 +28,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion // License
 using Bam.Core;
-using System.Linq;
 namespace zeromq
 {
     [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
@@ -36,10 +35,9 @@ namespace zeromq
         C.Cxx.DynamicLibrary
     {
         protected override void
-        Init(
-            Bam.Core.Module parent)
+        Init()
         {
-            base.Init(parent);
+            base.Init();
 
             this.Macros["MajorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("4");
             this.Macros["MinorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("1");
