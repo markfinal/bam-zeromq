@@ -39,9 +39,7 @@ namespace zeromq
         {
             base.Init();
 
-            this.Macros["MajorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("4");
-            this.Macros["MinorVersion"] = Bam.Core.TokenizedString.CreateVerbatim("1");
-            this.Macros["PatchVersion"] = Bam.Core.TokenizedString.CreateVerbatim("3");
+            this.SetSemanticVersion(4, 1, 3);
 
             this.CreateHeaderContainer("$(packagedir)/include/*.h");
 
