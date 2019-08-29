@@ -130,7 +130,7 @@ namespace zeromq
 
             this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
 
-            var source = this.CreateCxxSourceContainer("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
+            var source = this.CreateCxxSourceCollection("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
 
             source.PrivatePatch(settings =>
                 {
