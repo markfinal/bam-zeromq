@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageDefinition xsi:schemaLocation="http://www.buildamation.com ./Schema/BamPackageDefinitionV1.xsd" name="zeromq" version="3.2.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.buildamation.com">
+  <Sources>
+    <Source type="http" path="https://archive.org/download/zeromq_3.2.3/zeromq-3.2.3.tar.gz" subdir="zeromq-3.2.3" />
+  </Sources>
   <Dependents>
     <Package name="C" />
     <Package name="Clang" version="Xcode4" />

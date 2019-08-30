@@ -32,49 +32,38 @@ using System.Linq;
 namespace zeromq
 {
     public class ZMQPlatformHeader :
-        C.CModule
+        C.ProceduralHeaderFile
     {
-        private static Bam.Core.PathKey Key = Bam.Core.PathKey.Generate("ZeroMQ platform header");
-
-        protected override void
-        Init()
+        protected override TokenizedString OutputPath
         {
-            base.Init();
-            this.GeneratedPaths.Add(Key, this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp"));
-        }
-
-        public override void
-        Evaluate()
-        {
-            this.ReasonToExecute = null;
-            var outputPath = this.GeneratedPaths[Key].Parse();
-            if (!System.IO.File.Exists(outputPath))
+            get
             {
-                this.ReasonToExecute = Bam.Core.ExecuteReasoning.FileDoesNotExist(this.GeneratedPaths[Key]);
-                return;
+                return this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp");
             }
-
-            // platform.hpp.in should never change, so don't check it
         }
 
-        protected override void
-        ExecuteInternal(
-            Bam.Core.ExecutionContext context)
+        protected override string Contents
         {
-            var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
-
-            // parse the input header, and modify it while writing it out
-            // modifications are platform specific
-            using (System.IO.TextReader readFile = new System.IO.StreamReader(source.Parse()))
+            get
             {
-                var destPath = this.GeneratedPaths[Key].Parse();
-                var destDir = System.IO.Path.GetDirectoryName(destPath);
-                if (!System.IO.Directory.Exists(destDir))
+                var contents = new System.Text.StringBuilder();
+
+                var source = this.CreateTokenizedString("$(packagedir)/src/platform.hpp.in");
+                if (!source.IsParsed)
                 {
-                    System.IO.Directory.CreateDirectory(destDir);
+                    source.Parse();
                 }
-                using (System.IO.TextWriter writeFile = new System.IO.StreamWriter(destPath))
+
+                // parse the input header, and modify it while writing it out
+                // modifications are platform specific
+                using (System.IO.TextReader readFile = new System.IO.StreamReader(source.ToString()))
                 {
+                    var destPath = this.GeneratedPaths[HeaderFileKey].ToString();
+                    var destDir = System.IO.Path.GetDirectoryName(destPath);
+                    if (!System.IO.Directory.Exists(destDir))
+                    {
+                        System.IO.Directory.CreateDirectory(destDir);
+                    }
                     string line;
                     while ((line = readFile.ReadLine()) != null)
                     {
@@ -85,8 +74,9 @@ namespace zeromq
                             if (line.Contains("#undef ZMQ_HAVE_OSX") ||
                                 line.Contains("#undef ZMQ_HAVE_UIO"))
                             {
-                                var split = line.Split(new [] { ' ' });
-                                writeFile.WriteLine("#define " + split[1] + " 1");
+                                var split = line.Split(new[] { ' ' });
+                                contents.AppendFormat("#define {0} 1", split[1]);
+                                contents.AppendLine();
                                 continue;
                             }
                         }
@@ -97,22 +87,26 @@ namespace zeromq
                             if (line.Contains("#undef ZMQ_HAVE_LINUX") ||
                                 line.Contains("#undef ZMQ_HAVE_UIO"))
                             {
-                                var split = line.Split(new [] { ' ' });
-                                writeFile.WriteLine("#define " + split[1] + " 1");
+                                var split = line.Split(new[] { ' ' });
+                                contents.AppendFormat("#define {0} 1", split[1]);
+                                contents.AppendLine();
                                 continue;
                             }
                         }
-                        writeFile.WriteLine(line);
+                        contents.AppendLine(line);
+                    }
+                    if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX))
+                    {
+                        contents.AppendLine("#define ZMQ_USE_KQUEUE");
+                    }
+                    else if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Linux))
+                    {
+                        contents.AppendLine("#define ZMQ_USE_EPOLL");
                     }
                 }
-            }
-        }
 
-        protected override void
-        GetExecutionPolicy(
-            string mode)
-        {
-            // TODO: do nothing
+                return contents.ToString();
+            }
         }
     }
 
@@ -132,15 +126,15 @@ namespace zeromq
 
             source.PrivatePatch(settings =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.PreprocessorDefines.Add("DLL_EXPORT");
+                    var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    preprocessor.PreprocessorDefines.Add("DLL_EXPORT");
 
                     var cxxCompiler = settings as C.ICxxOnlyCompilerSettings;
                     cxxCompiler.ExceptionHandler = C.Cxx.EExceptionHandler.Synchronous;
 
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
                     {
-                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
+                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
 
                         var vcCompiler = settings as VisualCCommon.ICommonCompilerSettings;
                         if (null != vcCompiler)
@@ -171,13 +165,13 @@ namespace zeromq
 
                 source.PrivatePatch(settings =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
+                    var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagebuilddir)/$(config)"));
                 });
 
                 if (this.Linker is ClangCommon.LinkerBase)
                 {
-                    var ipc_listener = source.Children.Where(item => item.InputPath.Parse().EndsWith("ipc_listener.cpp"));
+                    var ipc_listener = source.Children.Where(item => item.InputPath.ToString().EndsWith("ipc_listener.cpp"));
                     ipc_listener.ElementAt(0).PrivatePatch(settings =>
                     {
                         var compiler = settings as C.ICommonCompilerSettings;
@@ -186,18 +180,12 @@ namespace zeromq
                 }
             }
 
-            if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows) &&
-                this.Linker is VisualCCommon.LinkerBase)
-            {
-                this.CompilePubliclyAndLinkAgainst<WindowsSDK.WindowsSDK>(source);
-            }
-
             this.PublicPatch((settings, appliedTo) =>
                 {
-                    var compiler = settings as C.ICommonCompilerSettings;
-                    if (null != compiler)
+                    var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    if (null != preprocessor)
                     {
-                        compiler.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
+                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
                     }
                 });
 
