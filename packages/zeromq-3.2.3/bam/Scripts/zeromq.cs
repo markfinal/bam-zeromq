@@ -37,10 +37,9 @@ namespace zeromq
         private static Bam.Core.PathKey Key = Bam.Core.PathKey.Generate("ZeroMQ platform header");
 
         protected override void
-        Init(
-            Bam.Core.Module parent)
+        Init()
         {
-            base.Init(parent);
+            base.Init();
             this.GeneratedPaths.Add(Key, this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp"));
         }
 
@@ -121,10 +120,9 @@ namespace zeromq
         C.Cxx.DynamicLibrary
     {
         protected override void
-        Init(
-            Bam.Core.Module parent)
+        Init()
         {
-            base.Init(parent);
+            base.Init();
 
             this.SetSemanticVersion(3, 2, 3);
 
