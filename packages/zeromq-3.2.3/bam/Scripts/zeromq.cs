@@ -141,6 +141,9 @@ namespace zeromq
                         {
                             vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level2;
                         }
+
+                        var compiler = settings as C.ICommonCompilerSettings;
+                        compiler.DisableWarnings.Add("4099");
                     }
 
                     var clangCompiler = settings as ClangCommon.ICommonCompilerSettings;
@@ -180,17 +183,6 @@ namespace zeromq
                         });
                     });
                 }
-            }
-            else
-            {
-                source["decoder.cpp"].ForEach(item =>
-                {
-                    item.PrivatePatch(settings =>
-                    {
-                        var compiler = settings as C.ICommonCompilerSettings;
-                        compiler.DisableWarnings.Add("4099");
-                    });
-                });
             }
 
             this.PublicPatch((settings, appliedTo) =>
