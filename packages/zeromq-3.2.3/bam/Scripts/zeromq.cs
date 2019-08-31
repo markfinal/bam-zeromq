@@ -171,13 +171,26 @@ namespace zeromq
 
                 if (this.Linker is ClangCommon.LinkerBase)
                 {
-                    var ipc_listener = source.Children.Where(item => item.InputPath.ToString().EndsWith("ipc_listener.cpp"));
-                    ipc_listener.ElementAt(0).PrivatePatch(settings =>
+                    source["ipc_listener.cpp"].ForEach(item =>
                     {
-                        var compiler = settings as C.ICommonCompilerSettings;
-                        compiler.DisableWarnings.Add("deprecated-declarations");
+                        item.PrivatePatch(settings =>
+                        {
+                            var compiler = settings as C.ICommonCompilerSettings;
+                            compiler.DisableWarnings.Add("deprecated-declarations");
+                        });
                     });
                 }
+            }
+            else
+            {
+                source["decoder.cpp"].ForEach(item =>
+                {
+                    item.PrivatePatch(settings =>
+                    {
+                        var compiler = settings as C.ICommonCompilerSettings;
+                        compiler.DisableWarnings.Add("4099");
+                    });
+                });
             }
 
             this.PublicPatch((settings, appliedTo) =>
