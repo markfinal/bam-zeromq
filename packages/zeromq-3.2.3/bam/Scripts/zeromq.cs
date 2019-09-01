@@ -31,7 +31,7 @@ using Bam.Core;
 using System.Linq;
 namespace zeromq
 {
-    public class ZMQPlatformHeader :
+    class ZMQPlatformHeader :
         C.ProceduralHeaderFile
     {
         protected override TokenizedString OutputPath
@@ -110,7 +110,7 @@ namespace zeromq
         }
     }
 
-    public class ZMQSharedLibrary :
+    class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
         protected override void

@@ -31,7 +31,7 @@ using Bam.Core;
 namespace zeromq
 {
     [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
-    public class ZMQSharedLibrary :
+    class ZMQSharedLibrary :
         C.Cxx.DynamicLibrary
     {
         protected override void

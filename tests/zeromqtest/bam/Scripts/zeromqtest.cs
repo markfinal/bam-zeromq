@@ -29,7 +29,7 @@
 #endregion // License
 namespace zeromqtest
 {
-    public sealed class Test :
+    sealed class Test :
         C.Cxx.ConsoleApplication
     {
         protected override void
@@ -52,7 +52,7 @@ namespace zeromqtest
         }
     }
 
-    public sealed class RuntimePackage :
+    sealed class RuntimePackage :
         Publisher.Collation
     {
         protected override void
