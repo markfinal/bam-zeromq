@@ -4,3 +4,4 @@ tests/*/debug_build
 tests/Logs
 *.pyc
 .DS_Store
+prebuiltsdks
