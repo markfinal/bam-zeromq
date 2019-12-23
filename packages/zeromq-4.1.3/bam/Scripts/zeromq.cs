@@ -28,12 +28,33 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion // License
 using Bam.Core;
+using C;
+
 namespace zeromq
 {
     [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
-    class ZMQSharedLibrary :
-        C.Cxx.DynamicLibrary
+    class SDK :
+        C.SDKTemplate
     {
+        protected override Bam.Core.TypeArray LibraryModuleTypes { get; } = new Bam.Core.TypeArray(
+            typeof(ZMQSharedLibrary)
+        );
+
+        protected override bool HonourHeaderFileLayout => false;
+    }
+
+    [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
+    class ZMQSharedLibrary :
+        C.Cxx.DynamicLibrary,
+        C.IPublicHeaders
+    {
+        Bam.Core.TokenizedString C.IPublicHeaders.SourceRootDirectory { get; } = null;
+
+        Bam.Core.StringArray C.IPublicHeaders.PublicHeaderPaths { get; } = new Bam.Core.StringArray(
+            "include/zmq.h",
+            "include/zmq_utils.h"
+        );
+
         protected override void
         Init()
         {
@@ -43,12 +64,34 @@ namespace zeromq
 
             this.CreateHeaderCollection("$(packagedir)/include/*.h");
 
-            this.Macros.Add("zmqsrcdir", this.CreateTokenizedString("$(packagedir)/src"));
-            var source = this.CreateCxxSourceCollection("$(zmqsrcdir)/*.cpp", macroModuleOverride: this);
+            var source = this.CreateCxxSourceCollection("$(packagedir)/src/*.cpp");
 
             source.PrivatePatch(settings =>
                 {
+                    if (settings is C.ICommonCompilerSettings compiler)
+                    {
+                        compiler.WarningsAsErrors = false;
+                    }
+
+                    if (settings is C.ICxxOnlyCompilerSettings cxxCompiler)
+                    {
+                        cxxCompiler.ExceptionHandler = C.Cxx.EExceptionHandler.Asynchronous;
+                    }
+
                     var preprocessor = settings as C.ICommonPreprocessorSettings;
+                    if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
+                    {
+                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
+                        // Note: this appears from the CMakeLists now
+                        preprocessor.PreprocessorDefines.Add("ZMQ_USE_SELECT");
+                    }
+
+                    if (settings is VisualCCommon.ICommonCompilerSettings vcCompiler)
+                    {
+                        vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level4;
+                    }
+
+                    /*
                     preprocessor.PreprocessorDefines.Add("DLL_EXPORT");
 
                     var cxxCompiler = settings as C.ICxxOnlyCompilerSettings;
@@ -56,11 +99,6 @@ namespace zeromq
 
                     if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Windows))
                     {
-                        preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/builds/msvc"));
-
-                        // Note: this appears from the CMakeLists now
-                        preprocessor.PreprocessorDefines.Add("ZMQ_USE_SELECT");
-
                         if (settings is VisualCCommon.ICommonCompilerSettings vcCompiler)
                         {
                             vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level2;
@@ -78,9 +116,11 @@ namespace zeromq
                         var compiler = settings as C.ICommonCompilerSettings;
                         compiler.DisableWarnings.Add("unused-parameter");
                     }
+                    */
                 });
             if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX | Bam.Core.EPlatform.Linux))
             {
+                /*
                 // TODO: is there a call for a CompileWith function?
                 var platformHeader = Bam.Core.Graph.Instance.FindReferencedModule<ZMQPlatformHeader>();
                 source.DependsOn(platformHeader);
@@ -104,8 +144,10 @@ namespace zeromq
                                 });
                         });
                 }
+                */
             }
 
+            /*
             this.PublicPatch((settings, appliedTo) =>
                 {
                     if (settings is C.ICommonPreprocessorSettings preprocessor)
@@ -113,6 +155,7 @@ namespace zeromq
                         preprocessor.IncludePaths.AddUnique(this.CreateTokenizedString("$(packagedir)/include"));
                     }
                 });
+                */
 
             this.PrivatePatch(settings =>
                 {
@@ -130,10 +173,12 @@ namespace zeromq
                             linker.Libraries.Add("-ladvapi32");
                         }
                     }
+                    /*
                     else if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Linux))
                     {
                         linker.Libraries.Add("-lpthread");
                     }
+                    */
                 });
         }
     }
