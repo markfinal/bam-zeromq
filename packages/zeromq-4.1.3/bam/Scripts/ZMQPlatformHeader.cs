@@ -33,13 +33,7 @@ namespace zeromq
     class ZMQPlatformHeader :
         C.ProceduralHeaderFile
     {
-        protected override TokenizedString OutputPath
-        {
-            get
-            {
-                return this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp");
-            }
-        }
+        protected override Bam.Core.TokenizedString OutputPath => this.CreateTokenizedString("$(packagebuilddir)/$(config)/platform.hpp");
 
         protected override string Contents
         {

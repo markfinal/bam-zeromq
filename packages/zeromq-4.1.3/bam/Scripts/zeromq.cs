@@ -118,13 +118,13 @@ namespace zeromq
                 });
             if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.OSX | Bam.Core.EPlatform.Linux))
             {
-                /*
                 // TODO: is there a call for a CompileWith function?
                 var platformHeader = Bam.Core.Graph.Instance.FindReferencedModule<ZMQPlatformHeader>();
                 source.DependsOn(platformHeader);
                 source.UsePublicPatches(platformHeader);
                 // TODO: end of function
 
+                /*
                 source.PrivatePatch(settings =>
                 {
                     var preprocessor = settings as C.ICommonPreprocessorSettings;
