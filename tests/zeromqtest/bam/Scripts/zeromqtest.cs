@@ -43,13 +43,11 @@ namespace zeromqtest
 
             this.PrivatePatch(settings =>
                 {
-                    /*
                     if (settings is C.ICommonLinkerSettingsLinux linuxLinker)
                     {
                         linuxLinker.CanUseOrigin = true;
                         linuxLinker.RPath.AddUnique("$ORIGIN");
                     }
-                    */
                 });
         }
     }

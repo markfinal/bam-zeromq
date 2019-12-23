@@ -88,6 +88,18 @@ namespace zeromq
                     {
                         vcCompiler.WarningLevel = VisualCCommon.EWarningLevel.Level4;
                     }
+                    if (settings is ClangCommon.ICommonCompilerSettings clangCompiler)
+                    {
+                        clangCompiler.AllWarnings = true;
+                        clangCompiler.ExtraWarnings = true;
+                        clangCompiler.Pedantic = true;
+                    }
+                    if (settings is GccCommon.ICommonCompilerSettings gccCompiler)
+                    {
+                        gccCompiler.AllWarnings = true;
+                        gccCompiler.ExtraWarnings = true;
+                        gccCompiler.Pedantic = true;
+                    }
 
                     /*
                     preprocessor.PreprocessorDefines.Add("DLL_EXPORT");
@@ -171,12 +183,12 @@ namespace zeromq
                             linker.Libraries.Add("-ladvapi32");
                         }
                     }
-                    /*
-                    else if (this.BuildEnvironment.Platform.Includes(Bam.Core.EPlatform.Linux))
+                    if (settings is C.ICommonLinkerSettingsLinux linuxLinker)
                     {
+                        linuxLinker.SharedObjectName = this.CreateTokenizedString("$(dynamicprefix)$(OutputName)$(sonameext)");
+
                         linker.Libraries.Add("-lpthread");
                     }
-                    */
                 });
         }
     }
