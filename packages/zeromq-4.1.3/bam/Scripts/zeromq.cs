@@ -28,8 +28,6 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endregion // License
 using Bam.Core;
-using C;
-
 namespace zeromq
 {
     [Bam.Core.ModuleGroup("Thirdparty/ZeroMQ")]
